@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raiku PFP Creator</title>
+    <!-- Google Fonts for Signature -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Caveat:wght@400;700&family=Cookie&family=Dancing+Script:wght@400;700&family=Great+Vibes&family=Inter:wght@300;400;600;800&family=Pacifico&family=Parisienne&family=Qwitcher+Grypen:wght@400;700&family=Satisfy&family=Yellowtail&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* CSS Variables - Raiku Brand Guidelines */
+        :root {
+            --raiku-black: #000204;
+            --raiku-white: #FDFDFF;
+            --raiku-neon: #C0FF38;
+            --glass-bg: rgba(0, 2, 4, 0.4);
+            --glass-border: rgba(253, 253, 255, 0.08);
+            --glass-blur: blur(16px);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 50% 50%, #1a1f2b 0%, var(--raiku-black) 100%);
+            color: var(--raiku-white);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Removed bg-glow to reduce lag */
+
+        .app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            max-width: 1600px;
+            z-index: 1;
+            padding: 2rem;
+            gap: 2rem;
+        }
+
+        /* Glassmorphism Panel Base */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* Brand Header */
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+        .brand-header img {
+            height: 45px;
+            width: auto;
+            filter: drop-shadow(0 0 15px rgba(192, 255, 56, 0.4));
+        }
+        .brand-header span {
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 24px;
+            color: var(--raiku-white);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(192, 255, 56, 0.3);
+            border-left: 2px solid rgba(253, 253, 255, 0.2);
+            padding-left: 15px;
+        }
+
+        /* Left Sidebar */
+        .sidebar-left {
+            width: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem 0;
+            gap: 1.2rem;
+            justify-content: center;
+            align-self: center;
+        }
+
+        .tool-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid transparent;
+            color: var(--raiku-white);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            gap: 8px;
+        }
+
+        .tool-btn img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            transition: var(--transition);
+        }
+
+        .tool-btn span {
+            font-family: 'Inter', sans-serif;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0px;
+            text-align: center;
+            line-height: 1.2;
+            word-wrap: break-word;
+            width: 100%;
+            padding: 0 4px;
+            box-sizing: border-box;
+        }
+
+        .tool-btn:hover {
+            background: rgba(192, 255, 56, 0.05);
+            border-color: rgba(192, 255, 56, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .tool-btn:hover img {
+            filter: drop-shadow(0 0 5px var(--raiku-neon));
+            transform: scale(1.1);
+        }
+
+        .tool-btn.active {
+            border-color: var(--raiku-neon);
+            box-shadow: 0 0 15px rgba(192, 255, 56, 0.2);
+        }
+        .tool-btn.active img {
+            filter: drop-shadow(0 0 8px var(--raiku-neon));
+        }
+
+        /* Middle Workspace */
+        .workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .canvas-container-outer {
+            width: 500px;
+            height: 500px;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 2px solid var(--glass-border);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .canvas-container-outer:hover {
+            border-color: rgba(192, 255, 56, 0.4);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5), 0 0 15px rgba(192, 255, 56, 0.1);
+        }
+
+
+
+        .upload-btn {
+            background: var(--raiku-neon);
+            color: var(--raiku-black);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(192, 255, 56, 0.3);
+        }
+
+        /* Options/Controls Panel (Slides out next to sidebar) */
+        .controls-panel {
+            position: absolute;
+            left: 140px; /* Sidebar width + gap */
+            top: 2rem;
+            bottom: 2rem;
+            width: 300px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            opacity: 0;
+            transform: translateX(-20px);
+            pointer-events: none;
+            transition: var(--transition);
+            z-index: 9999;
+        }
+
+        .controls-panel.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+
+        .close-panel-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: #FDFDFF;
+            font-size: 24px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 1000;
+            padding: 15px;
+        }
+
+        .color-swatches {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 50;
+        }
+        .color-swatch {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+        .color-swatch:hover, .color-swatch.active {
+            transform: scale(1.1);
+            border-color: var(--raiku-white);
+        }
+        .close-panel-btn:hover {
+            color: var(--raiku-white);
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        .sig-preview {
+            width: 100%;
+            min-height: 60px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border: 1px dashed rgba(253, 253, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--raiku-white);
+            margin-top: 10px;
+            overflow: hidden;
+            padding: 10px;
+            word-break: break-all;
+        }
+
+        .panel-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--raiku-neon);
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 10px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .control-group label {
+            font-size: 12px;
+            color: rgba(253, 253, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .custom-select, .custom-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            color: var(--raiku-white);
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            outline: none;
+            transition: var(--transition);
+        }
+        
+        .custom-select option {
+            background: var(--raiku-black);
+            color: var(--raiku-white);
+        }
+
+        .custom-select:focus, .custom-input:focus {
+            border-color: var(--raiku-neon);
+        }
+
+        .action-btn {
+            background: transparent;
+            color: var(--raiku-white);
+            border: 1px solid var(--glass-border);
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            border-color: var(--raiku-neon);
+            color: var(--raiku-neon);
+        }
+        
+        .demo-item-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        /* Custom Scrollbar for demo grid */
+        .demo-item-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+        .demo-item-grid::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        .demo-item-grid::-webkit-scrollbar-thumb {
+            background: rgba(192, 255, 56, 0.3);
+            border-radius: 10px;
+        }
+        .demo-item-grid::-webkit-scrollbar-thumb:hover {
+            background: var(--raiku-neon);
+        }
+        
+        .demo-item {
+            aspect-ratio: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .demo-item:hover {
+            border-color: var(--raiku-neon);
+            background: rgba(192, 255, 56, 0.1);
+        }
+        .demo-item i {
+            font-size: 24px;
+            color: var(--raiku-white);
+        }
+
+        /* Right Sidebar */
+        .sidebar-right {
+            width: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem 0;
+            gap: 1.2rem;
+            justify-content: center;
+            align-self: center;
+            border-radius: 40px;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid transparent;
+            color: rgba(253, 253, 255, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 18px;
+            transition: var(--transition);
+        }
+
+        .social-link:hover {
+            background: rgba(192, 255, 56, 0.15);
+            color: var(--raiku-neon);
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 0 20px rgba(192, 255, 56, 0.3);
+            text-shadow: 0 0 10px var(--raiku-neon);
+        }
+        .social-link:active {
+            transform: scale(0.9);
+        }
+
+        /* Action Bar */
+        .action-bar {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .action-btn-main {
+            background: transparent;
+            border: 1px solid var(--raiku-neon);
+            color: var(--raiku-neon);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .action-btn-main:hover {
+            background: var(--raiku-neon);
+            color: var(--raiku-black);
+            box-shadow: 0 0 20px rgba(192, 255, 56, 0.4);
+        }
+        .action-btn-reset {
+            background: transparent;
+            border: 1px solid #FF6600;
+            color: #FF6600;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .action-btn-reset:hover {
+            background: #FF6600;
+            color: white;
+            box-shadow: 0 0 20px rgba(255, 102, 0, 0.4);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- bg-glow removed -->
+
+    <div class="app-container">
+        <!-- LEFT SIDEBAR -->
+        <div class="sidebar-left">
+            <div class="tool-btn glass-panel" data-panel="bg-panel">
+                <img src="icon/backround.png" alt="Background">
+                <span>Background</span>
+            </div>
+            <div class="tool-btn glass-panel" data-panel="chad-panel">
+                <img src="icon/chaditem.png" alt="Chad Item">
+                <span>Chad Item</span>
+            </div>
+            <div class="tool-btn glass-panel" data-panel="sig-panel">
+                <img src="icon/signature.png" alt="Signature">
+                <span>Signature</span>
+            </div>
+            <div class="tool-btn glass-panel" data-panel="wall-panel">
+                <img src="icon/wallpaper.png" alt="Wallpaper">
+                <span>Wallpaper</span>
+            </div>
+        </div>
+
+        <!-- CONTROLS PANELS -->
+        <div class="controls-panel glass-panel" id="bg-panel">
+            <div class="close-panel-btn"><i class="fa-solid fa-xmark"></i></div>
+            <h3 class="panel-title">Background</h3>
+            <p style="font-size: 13px; color: #aaa; margin-bottom: 10px;">Choose a background for your PFP.</p>
+            <div class="demo-item-grid">
+                <div class="demo-item bg-item" onclick="setBackground('raikubackround/-.jpg')" style="background-image: url('raikubackround/-.jpg'); background-size: cover; background-position: center;"></div>
+                <div class="demo-item bg-item" onclick="setBackground('raikubackround/Black.jpg')" style="background-image: url('raikubackround/Black.jpg'); background-size: cover; background-position: center;"></div>
+                <div class="demo-item bg-item" onclick="setBackground('raikubackround/Classic.jpg')" style="background-image: url('raikubackround/Classic.jpg'); background-size: cover; background-position: center;"></div>
+                <div class="demo-item bg-item" onclick="setBackground('raikubackround/Gray.jpg')" style="background-image: url('raikubackround/Gray.jpg'); background-size: cover; background-position: center;"></div>
+                <div class="demo-item bg-item" onclick="setBackground('raikubackround/White.jpg')" style="background-image: url('raikubackround/White.jpg'); background-size: cover; background-position: center;"></div>
+            </div>
+        </div>
+
+        <div class="controls-panel glass-panel" id="chad-panel">
+            <div class="close-panel-btn"><i class="fa-solid fa-xmark"></i></div>
+            <h3 class="panel-title">Chad Items</h3>
+            <p style="font-size: 13px; color: #aaa; margin-bottom: 10px;">Click to add to your PFP. Drag, rotate, and scale as needed.</p>
+            <button class="action-btn-main" onclick="flipItem()" style="margin-bottom: 15px; width: 100%; justify-content: center;"><i class="fa-solid fa-arrows-left-right"></i> Flip Horizontal</button>
+            <div class="demo-item-grid">
+                <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/Raiku cap.png')" style="background-image: url('Chad item/Raiku cap.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+                <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/benie hat.png')" style="background-image: url('Chad item/benie hat.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+                <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/carvat.png')" style="background-image: url('Chad item/carvat.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+                <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/hoatai.png')" style="background-image: url('Chad item/hoatai.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+                <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/pineapple cat.png')" style="background-image: url('Chad item/pineapple cat.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+                <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/rkSOL.png')" style="background-image: url('Chad item/rkSOL.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+                <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/sword.png')" style="background-image: url('Chad item/sword.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+                <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/towel.png')" style="background-image: url('Chad item/towel.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+            </div>
+        </div>
+
+        <div class="controls-panel glass-panel" id="sig-panel">
+            <div class="close-panel-btn"><i class="fa-solid fa-xmark"></i></div>
+            <h3 class="panel-title">Signature</h3>
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">
+                <input type="text" id="sig-text" class="custom-input" placeholder="Enter your name (e.g. Raiku Chad)" value="Raiku Chad" oninput="updatePreview()">
+                
+                <select id="sig-font" class="custom-select" onchange="updatePreview()">
+                    <option value="'Dancing Script', cursive">Dancing Script</option>
+                    <option value="'Pacifico', cursive">Pacifico</option>
+                    <option value="'Great Vibes', cursive">Great Vibes</option>
+                    <option value="'Satisfy', cursive">Satisfy</option>
+                    <option value="'Yellowtail', cursive">Yellowtail</option>
+                </select>
+
+                <div>
+                    <label style="font-size: 13px; color: #aaa; margin-bottom: 5px; display: block;">Signature Color:</label>
+                    <input type="color" id="sig-color" value="#C0FF38" style="display: none;" onchange="updatePreview()">
+                    <div class="color-swatches">
+                        <div class="color-swatch active" style="background-color: #C0FF38;" onclick="selectColor('#C0FF38', this)"></div>
+                        <div class="color-swatch" style="background-color: #FDFDFF;" onclick="selectColor('#FDFDFF', this)"></div>
+                        <div class="color-swatch" style="background-color: #FF3366;" onclick="selectColor('#FF3366', this)"></div>
+                    </div>
+                </div>
+                
+                <label style="font-size: 13px; color: #aaa;">Preview</label>
+                <div class="sig-preview" id="sig-preview-box" style="font-family: 'Dancing Script'; color: #C0FF38;">Raiku Chad</div>
+            </div>
+            <button class="action-btn-main" onclick="addSignature()" style="width: 100%; justify-content: center; margin-top: 15px;">
+                <i class="fa-solid fa-plus"></i> Add Signature
+            </button>
+        </div>
+
+        <div class="controls-panel glass-panel" id="wall-panel">
+            <div class="close-panel-btn"><i class="fa-solid fa-xmark"></i></div>
+            <h3 class="panel-title">Wallpaper</h3>
+            <p style="font-size: 13px; color: #aaa;">Wallpaper features (Coming soon)</p>
+        </div>
+
+
+        <!-- WORKSPACE (CENTER) -->
+        <div class="workspace">
+            <div class="brand-header">
+                <img src="brand asset/Logo Green RGB.png" alt="Raiku Logo">
+                <span>Raiku PFP Editor</span>
+            </div>
+            <div class="canvas-container-outer">
+                <!-- Canvas dimension set to 500x500 to match container -->
+                <canvas id="pfp-canvas" width="500" height="500"></canvas>
+            </div>
+            <div class="action-bar">
+                <label class="upload-btn">
+                    <i class="fa-solid fa-upload"></i> Upload PFP
+                    <input type="file" id="pfp-upload" accept="image/*" style="display: none;">
+                </label>
+                <button class="action-btn-reset" onclick="resetCanvas()"><i class="fa-solid fa-fire"></i> Reset</button>
+                <button class="action-btn-main" onclick="downloadPFP()"><i class="fa-solid fa-download"></i> Download PFP</button>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDEBAR (CONTACTS) -->
+        <div class="sidebar-right glass-panel">
+            <a href="#" class="social-link" id="contact-website" target="_blank"><i class="fa-solid fa-globe"></i></a>
+            <a href="#" class="social-link" id="contact-twitter" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#" class="social-link" id="contact-telegram" target="_blank"><i class="fa-brands fa-telegram"></i></a>
+            <a href="#" class="social-link" id="contact-discord" target="_blank"><i class="fa-brands fa-discord"></i></a>
+            <a href="#" class="social-link" id="contact-linkedin" target="_blank"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+    </div>
+
+    <!-- Fabric.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <script>
+        // --- 1. UI Interactions ---
+        const toolBtns = document.querySelectorAll('.tool-btn');
+        const panels = document.querySelectorAll('.controls-panel');
+
+        toolBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isActive = btn.classList.contains('active');
+                
+                // Remove active from all
+                toolBtns.forEach(b => b.classList.remove('active'));
+                panels.forEach(p => p.classList.remove('active'));
+                
+                // If it was not active, open it
+                if (!isActive) {
+                    btn.classList.add('active');
+                    const panelId = btn.getAttribute('data-panel');
+                    document.getElementById(panelId).classList.add('active');
+                }
+            });
+        });
+
+        // Close on click outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.controls-panel') && !e.target.closest('.sidebar-left')) {
+                toolBtns.forEach(b => b.classList.remove('active'));
+                panels.forEach(p => p.classList.remove('active'));
+            }
+        });
+
+        // Close on Esc key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                toolBtns.forEach(b => b.classList.remove('active'));
+                panels.forEach(p => p.classList.remove('active'));
+            }
+        });
+
+        // --- 2. Fabric.js Canvas Setup ---
+        const canvas = new fabric.Canvas('pfp-canvas', {
+            preserveObjectStacking: true, // Keep objects in order when selecting
+            selection: true // Allow multi-select
+        });
+
+        // Setup control styling for the brand (Neon color for handles)
+        fabric.Object.prototype.set({
+            transparentCorners: false,
+            cornerColor: '#C0FF38',
+            cornerStrokeColor: '#000204',
+            borderColor: '#C0FF38',
+            cornerSize: 12,
+            padding: 10,
+            cornerStyle: 'circle'
+        });
+
+        // Add a bottom rotation control for symmetric editing
+        fabric.Object.prototype.controls.mtrBottom = new fabric.Control({
+            x: 0,
+            y: 0.5,
+            offsetY: 40,
+            cursorStyleHandler: fabric.controlsUtils.rotationStyleHandler,
+            actionHandler: fabric.controlsUtils.rotationWithSnapping,
+            actionName: 'rotate',
+            withConnection: true
+        });
+
+        // Handle PFP Upload
+        const uploadInput = document.getElementById('pfp-upload');
+
+        uploadInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(f) {
+                const data = f.target.result;
+                fabric.Image.fromURL(data, function(img) {
+                    // Scale image to cover the canvas
+                    const canvasWidth = canvas.getWidth();
+                    const canvasHeight = canvas.getHeight();
+                    
+                    const scale = Math.max(canvasWidth / img.width, canvasHeight / img.height);
+                    
+                    img.set({
+                        scaleX: scale,
+                        scaleY: scale,
+                        originX: 'center',
+                        originY: 'center',
+                        left: canvasWidth / 2,
+                        top: canvasHeight / 2,
+                        selectable: false, // User PFP should not be draggable by default
+                        evented: false,
+                        isPFP: true // Custom property to identify it
+                    });
+
+                    // Add to canvas and send to back (but above the canvas background image)
+                    canvas.add(img);
+                    canvas.sendToBack(img);
+                    canvas.renderAll();
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // --- 3. Signature Logic ---
+        function addSignature() {
+            const textContent = document.getElementById('sig-text').value;
+            const fontFam = document.getElementById('sig-font').value;
+            const color = document.getElementById('sig-color').value;
+
+            if (!textContent) return;
+
+            const text = new fabric.Text(textContent, {
+                left: canvas.width / 2,
+                top: canvas.height / 2,
+                fontFamily: fontFam,
+                fill: color,
+                fontSize: 60,
+                originX: 'center',
+                originY: 'center',
+                shadow: new fabric.Shadow({
+                    color: 'rgba(0,0,0,0.8)',
+                    blur: 10,
+                    offsetX: 2,
+                    offsetY: 2
+                })
+            });
+
+            canvas.add(text);
+            canvas.setActiveObject(text);
+            canvas.renderAll();
+        }
+
+        // --- 4. Chad Item Logic (Demo using FontAwesome SVGs or text objects as placeholders) ---
+        // Since we don't have actual PNG assets yet, I'll add text emojis or shapes as placeholders
+        function addChadItem(imageUrl) {
+            fabric.Image.fromURL(imageUrl, function(img) {
+                // Scale down slightly if too big, otherwise keep native
+                if(img.width > 200) {
+                    img.scaleToWidth(200);
+                }
+                img.set({
+                    left: canvas.width / 2,
+                    top: canvas.height / 2,
+                    originX: 'center',
+                    originY: 'center',
+                });
+                canvas.add(img);
+                canvas.setActiveObject(img);
+            });
+        }
+
+        function setBackground(imageUrl) {
+            fabric.Image.fromURL(imageUrl, function(img) {
+                // Scale image to cover the canvas
+                const canvasWidth = canvas.getWidth();
+                const canvasHeight = canvas.getHeight();
+                
+                const scale = Math.max(canvasWidth / img.width, canvasHeight / img.height);
+                
+                img.set({
+                    scaleX: scale,
+                    scaleY: scale,
+                    originX: 'center',
+                    originY: 'center',
+                    left: canvasWidth / 2,
+                    top: canvasHeight / 2
+                });
+
+                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+            });
+        }
+
+        function flipItem() {
+            const activeObj = canvas.getActiveObject();
+            if (activeObj) {
+                activeObj.set('flipX', !activeObj.flipX);
+                canvas.renderAll();
+            } else {
+                alert('Please select an item on the canvas before flipping.');
+            }
+        }
+
+        // Handle delete key to remove active objects
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'Delete' || e.key === 'Backspace') {
+                const activeObjects = canvas.getActiveObjects();
+                if (activeObjects.length) {
+                    canvas.discardActiveObject();
+                    activeObjects.forEach(function(object) {
+                        // Don't delete the background
+                        if (object !== canvas.backgroundImage) {
+                            canvas.remove(object);
+                        }
+                    });
+                }
+            }
+        });
+
+        // --- 5. Signature Preview & Canvas Update Logic ---
+        const sigTextInput = document.getElementById('sig-text');
+        const sigFontSelect = document.getElementById('sig-font');
+        const sigColorInput = document.getElementById('sig-color');
+        const sigPreviewBox = document.getElementById('sig-preview-box');
+
+        function selectColor(colorHex, swatchElement) {
+            // Update input value (must be lowercase for input type color)
+            sigColorInput.value = colorHex.toLowerCase();
+            
+            // Highlight swatch
+            document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.remove('active'));
+            if (swatchElement) {
+                swatchElement.classList.add('active');
+            }
+            
+            updatePreview();
+        }
+
+        function updatePreview() {
+            sigPreviewBox.textContent = sigTextInput.value || 'Preview';
+            sigPreviewBox.style.fontFamily = sigFontSelect.value;
+            sigPreviewBox.style.color = sigColorInput.value;
+            
+            // Auto update selected canvas object if it's a text
+            const activeObj = canvas.getActiveObject();
+            if (activeObj && activeObj.type === 'text') {
+                activeObj.set({
+                    fontFamily: sigFontSelect.value,
+                    fill: sigColorInput.value,
+                    text: sigTextInput.value || 'Text'
+                });
+                canvas.renderAll();
+            }
+        }
+
+        sigTextInput.addEventListener('input', updatePreview);
+        sigFontSelect.addEventListener('change', updatePreview);
+        sigColorInput.addEventListener('input', () => selectColor(sigColorInput.value, null));
+
+        // Sync inputs when selecting an object on canvas
+        canvas.on('selection:created', syncInputsToSelection);
+        canvas.on('selection:updated', syncInputsToSelection);
+        
+        function syncInputsToSelection(e) {
+            const activeObj = e.selected[0];
+            if (activeObj && activeObj.type === 'text') {
+                sigTextInput.value = activeObj.text;
+                sigFontSelect.value = activeObj.fontFamily;
+                selectColor(activeObj.fill, null);
+            }
+        }
+
+        // --- 6. Close Panel Logic ---
+        document.querySelectorAll('.close-panel-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const panel = this.closest('.controls-panel');
+                if (panel) {
+                    panel.classList.remove('active');
+                    const toolBtn = document.querySelector(`.tool-btn[data-panel="${panel.id}"]`);
+                    if (toolBtn) toolBtn.classList.remove('active');
+                }
+            });
+        });
+
+        // --- 7. Fetch Contact Links ---
+        fetch('contact.json')
+            .then(response => response.json())
+            .then(data => {
+                if (data.website) document.getElementById('contact-website').href = data.website;
+                if (data.twitter) document.getElementById('contact-twitter').href = data.twitter;
+                if (data.discord) document.getElementById('contact-discord').href = data.discord;
+                if (data.telegram) document.getElementById('contact-telegram').href = data.telegram;
+                if (data.linkedin) document.getElementById('contact-linkedin').href = data.linkedin;
+            })
+            .catch(err => console.log('Không tải được contact.json, có thể do lỗi CORS nếu không chạy Live Server.'));
+
+        // --- 8. Export & Reset Logic ---
+        function downloadPFP() {
+            // Check if there's anything on canvas
+            if (!canvas.backgroundImage && canvas.getObjects().length === 0) {
+                alert("Please upload a PFP or add an item before downloading.");
+                return;
+            }
+
+            // Deselect to remove bounding boxes
+            canvas.discardActiveObject();
+            canvas.renderAll();
+
+            const dataURL = canvas.toDataURL({
+                format: 'png',
+                quality: 1
+            });
+
+            const link = document.createElement('a');
+            link.download = 'raiku_pfp.png';
+            link.href = dataURL;
+            link.click();
+        }
+
+        function resetCanvas() {
+            if (confirm("Are you sure you want to clear all designs and start over?")) {
+                canvas.clear();
+                // Re-apply background color or reset properties if needed
+                canvas.renderAll();
+            }
+        }
+    </script>
+</body>
+</html>
