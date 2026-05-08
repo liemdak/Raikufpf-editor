@@ -31,7 +31,10 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at 50% 50%, #1a1f2b 0%, var(--raiku-black) 100%);
+            background: url('backround web/raiku_grid_flash.gif');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             color: var(--raiku-white);
             height: 100vh;
             overflow: hidden;
@@ -263,6 +266,14 @@
             transform: scale(1.1);
             border-color: var(--raiku-white);
         }
+        .auto-swatch {
+            background: linear-gradient(135deg, #C0FF38 0%, #55cc00 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--raiku-black);
+        }
         .close-panel-btn:hover {
             color: var(--raiku-white);
             transform: scale(1.1) rotate(90deg);
@@ -479,6 +490,8 @@
         }
 
     </style>
+
+
 </head>
 <body>
 
@@ -527,11 +540,15 @@
             <div class="demo-item-grid">
                 <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/Raiku cap.png')" style="background-image: url('Chad item/Raiku cap.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                 <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/benie hat.png')" style="background-image: url('Chad item/benie hat.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
-                <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/carvat.png')" style="background-image: url('Chad item/carvat.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
-                <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/hoatai.png')" style="background-image: url('Chad item/hoatai.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+                <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/benie ver2.png')" style="background-image: url('Chad item/benie ver2.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+                <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/lowe.png')" style="background-image: url('Chad item/lowe.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+                <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/phone.png')" style="background-image: url('Chad item/phone.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                 <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/pineapple cat.png')" style="background-image: url('Chad item/pineapple cat.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
-                <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/rkSOL.png')" style="background-image: url('Chad item/rkSOL.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
-                <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/sword.png')" style="background-image: url('Chad item/sword.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+                <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/raiku coin.png')" style="background-image: url('Chad item/raiku coin.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+                <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/raiku file.png')" style="background-image: url('Chad item/raiku file.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+                <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/raiku glass.png')" style="background-image: url('Chad item/raiku glass.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+                <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/raiku namecard.png')" style="background-image: url('Chad item/raiku namecard.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
+                <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/shield.png')" style="background-image: url('Chad item/shield.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
                 <div class="demo-item chad-item-real" onclick="addChadItem('Chad item/towel.png')" style="background-image: url('Chad item/towel.png'); background-size: contain; background-repeat: no-repeat; background-position: center;"></div>
             </div>
         </div>
@@ -552,11 +569,13 @@
 
                 <div>
                     <label style="font-size: 13px; color: #aaa; margin-bottom: 5px; display: block;">Signature Color:</label>
-                    <input type="color" id="sig-color" value="#C0FF38" style="display: none;" onchange="updatePreview()">
-                    <div class="color-swatches">
-                        <div class="color-swatch active" style="background-color: #C0FF38;" onclick="selectColor('#C0FF38', this)"></div>
-                        <div class="color-swatch" style="background-color: #FDFDFF;" onclick="selectColor('#FDFDFF', this)"></div>
-                        <div class="color-swatch" style="background-color: #FF3366;" onclick="selectColor('#FF3366', this)"></div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <input type="color" id="sig-color" value="#C0FF38" style="width: 40px; height: 40px; border: none; background: transparent; cursor: pointer; border-radius: 8px;" onchange="updatePreview()">
+                        <div class="color-swatches" style="flex: 1;">
+                            <div class="color-swatch" style="background-color: #FDFDFF;" onclick="selectColor('#FDFDFF', this)"></div>
+                            <div class="color-swatch" style="background-color: #FF3366;" onclick="selectColor('#FF3366', this)"></div>
+                            <div class="color-swatch" style="background-color: #000204;" onclick="selectColor('#000204', this)"></div>
+                        </div>
                     </div>
                 </div>
                 
@@ -650,6 +669,11 @@
         const canvas = new fabric.Canvas('pfp-canvas', {
             preserveObjectStacking: true, // Keep objects in order when selecting
             selection: true // Allow multi-select
+        });
+
+        // Handle window resize to update canvas offset (critical for mobile)
+        window.addEventListener('resize', () => {
+            canvas.calcOffset();
         });
 
         // Setup control styling for the brand (Neon color for handles)
@@ -824,6 +848,11 @@
             }
             
             updatePreview();
+        }
+
+        function selectAutoColor(swatchElement) {
+            // Auto coordination: default to Raiku Neon for now as it matches all backgrounds
+            selectColor('#C0FF38', swatchElement);
         }
 
         function updatePreview() {
